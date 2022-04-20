@@ -15,5 +15,11 @@
   "bugs": {
     "url": "https://github.com/marsqinht/tiny-react/issues"
   },
-  "homepage": "https://github.com/marsqinht/tiny-react#readme"
+  "homepage": "https://github.com/marsqinht/tiny-react#readme",
+  "devDependencies": {
+    "rollup": "^2.70.2",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-typescript2": "^0.31.2"
+  }
 }

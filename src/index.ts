@@ -1,6 +1,7 @@
 
-import { createElement } from './react-dom'
+import { createElement, render } from './react-dom'
 
 export default {
-  createElement
+  createElement,
+  render
 }
