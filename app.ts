@@ -2,9 +2,9 @@ import React from './src/index'
 
 const element = React.createElement(
   "div",
-  { id: "foo" },
+  { id: "foo", class: 'fff' },
   React.createElement("a", null, "bar"),
-  React.createElement("b", null, React.createElement('h1', null, 'title'))
+  React.createElement("b", { 'cc': 33 }, React.createElement('h1', null, 'title'))
 );
 
 React.render(element, '#root')
