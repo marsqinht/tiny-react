@@ -14,3 +14,8 @@ export function setDomAtrribute(el: Element, props: Record<string, any>, prop: s
     el[prop] = props[prop]
   }
 }
+
+export function createDom(fiber) {
+  console.log('fiber :>> ', fiber);
+  return document.createElement('div')
+}

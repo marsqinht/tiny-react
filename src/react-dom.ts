@@ -1,4 +1,6 @@
-import { appendChild, isInnerProperty, setDomAtrribute } from "./dom"
+// import { appendChild, isInnerProperty, setDomAtrribute } from "./dom"
+
+import { createDom } from "./dom"
 
 interface ReactNode {
   type: string,
@@ -10,6 +12,21 @@ interface ReactNode {
 }
 
 const TEXT_ELEMENT_TYPE = 'TEXT_ELEMENT'
+
+
+interface Fiber {
+  type?: string
+  props: {
+    children: ReactNode[]
+    [key: string]: any
+  }
+  parent?: Fiber
+  child?: Fiber
+  sibling?: Fiber
+  dom: Element | Text | null
+}
+
+let nextUnitOfWork: Fiber | undefined
 
 export function createElement(type: string, props?: Record<string, unknown> | null, ...children: any[]): ReactNode {
   return {
@@ -32,20 +49,96 @@ export function render(element: ReactNode, container: Element | string) {
   return innerRender(element, root)
 }
 
+
+// function innerRender(reactNode: ReactNode, container: Element | Text) {
+//   const { type, props } = reactNode
+//   const el = type === TEXT_ELEMENT_TYPE ? document.createTextNode(`${props.nodeValue}`) : document.createElement(type)
+//   Object.keys(props).forEach(prop => {
+//     if(isInnerProperty(prop)) {
+//       setDomAtrribute(el as Element, props, prop)
+//     }
+//   })
+//   props.children.forEach(child => {
+//     innerRender(child, el)
+//   })
+//   appendChild(container, el)
+// }
+
+
 function innerRender(reactNode: ReactNode, container: Element | Text) {
-  const { type, props } = reactNode
-  const el = type === TEXT_ELEMENT_TYPE ? document.createTextNode(`${props.nodeValue}`) : document.createElement(type)
-  Object.keys(props).forEach(prop => {
-    if(isInnerProperty(prop)) {
-      setDomAtrribute(el as Element, props, prop)
+
+  nextUnitOfWork = {
+    dom: container,
+    props: {
+      children: [ reactNode ],
     }
-  })
-  props.children.forEach(child => {
-    innerRender(child, el)
-  })
-  appendChild(container, el)
+  }
+
+  function performUnitOfWork(fiber: Fiber) {
+    if (!fiber.dom) {
+      fiber.dom = createDom(fiber)
+    }
+  
+    if (fiber.parent && fiber.parent.dom && fiber.dom) {
+      fiber.parent.dom.appendChild(fiber.dom)
+    }
+  
+    const elements = fiber.props.children
+    let index = 0
+    let prevSibling: Fiber | null = null
+  
+    while (index < elements.length) {
+      const element = elements[index]
+  
+      const newFiber: Fiber = {
+        type: element.type,
+        props: element.props,
+        parent: fiber,
+        dom: null,
+      }
+  
+      if (index === 0) {
+        fiber.child = newFiber
+      } else {
+        prevSibling &&  (prevSibling.sibling = newFiber)
+      }
+  
+      prevSibling = newFiber
+      index++
+    }
+  
+    if (fiber.child) {
+      return fiber.child
+    }
+    let nextFiber = fiber
+    while (nextFiber) {
+      if (nextFiber.sibling) {
+        return nextFiber.sibling
+      }
+      nextFiber = nextFiber.parent as Fiber
+    }
+  }
+
+  function workLoop(deadline) {
+    let shouldYield = false
+    while (nextUnitOfWork && !shouldYield) {
+      nextUnitOfWork = performUnitOfWork(
+        nextUnitOfWork as Fiber
+      )
+  
+      shouldYield = deadline.timeRemaining() < 1
+    }
+  
+    requestIdleCallback(workLoop)
+  } 
+
+  requestIdleCallback(workLoop)
+
+  console.log('nextUnitOfWork :>> ', nextUnitOfWork);
+  
 }
 
+  
 
 
 function createTextElement(node: string) {
