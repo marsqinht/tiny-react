@@ -27,6 +27,7 @@ interface Fiber {
 }
 
 let nextUnitOfWork: Fiber | undefined
+let wipRoot: Fiber | null = null
 
 export function createElement(type: string, props?: Record<string, unknown> | null, ...children: any[]): ReactNode {
   return {
@@ -63,25 +64,40 @@ export function render(element: ReactNode, container: Element | string) {
 //   })
 //   appendChild(container, el)
 // }
+function commitRoot() {
+  commitWork(wipRoot?.child)
+  wipRoot = null
+}
 
+function commitWork(fiber) {
+  if (!fiber) {
+    return
+  }
+  const domParent = fiber.parent.dom
+  domParent.appendChild(fiber.dom)
+  commitWork(fiber.child)
+  commitWork(fiber.sibling)
+}
 
 function innerRender(reactNode: ReactNode, container: Element | Text) {
 
-  nextUnitOfWork = {
+  wipRoot = {
     dom: container,
     props: {
       children: [ reactNode ],
     }
   }
+  nextUnitOfWork = wipRoot
+  
 
   function performUnitOfWork(fiber: Fiber) {
     if (!fiber.dom) {
       fiber.dom = createDom(fiber)
     }
   
-    if (fiber.parent && fiber.parent.dom && fiber.dom) {
-      fiber.parent.dom.appendChild(fiber.dom)
-    }
+    // if (fiber.parent && fiber.parent.dom && fiber.dom) {
+    //   fiber.parent.dom.appendChild(fiber.dom)
+    // }
   
     const elements = fiber.props.children
     let index = 0
@@ -110,6 +126,7 @@ function innerRender(reactNode: ReactNode, container: Element | Text) {
     if (fiber.child) {
       return fiber.child
     }
+    
     let nextFiber = fiber
     while (nextFiber) {
       if (nextFiber.sibling) {
@@ -128,13 +145,17 @@ function innerRender(reactNode: ReactNode, container: Element | Text) {
   
       shouldYield = deadline.timeRemaining() < 1
     }
+
+    
+    if (!nextUnitOfWork && wipRoot) {
+      commitRoot()
+    }
   
     requestIdleCallback(workLoop)
   } 
 
   requestIdleCallback(workLoop)
 
-  console.log('nextUnitOfWork :>> ', nextUnitOfWork);
   
 }
 

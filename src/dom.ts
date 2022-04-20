@@ -16,6 +16,21 @@ export function setDomAtrribute(el: Element, props: Record<string, any>, prop: s
 }
 
 export function createDom(fiber) {
-  console.log('fiber :>> ', fiber);
-  return document.createElement('div')
+  const dom =
+    fiber.type == "TEXT_ELEMENT"
+      ? document.createTextNode("")
+      : document.createElement(fiber.type)
+
+  const isProperty = key => key !== "children"
+  Object.keys(fiber.props)
+    .filter(isProperty)
+    .forEach(name => {
+      dom[name] = fiber.props[name]
+    })
+
+  return dom
 }
+// export function createDom(fiber) {
+//   console.log('fiber :>> ', fiber);
+//   return document.createElement('div')
+// }
