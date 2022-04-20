@@ -1,0 +1,19 @@
+{
+  "name": "tiny-react",
+  "version": "1.0.0",
+  "description": "最简版react实现",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marsqinht/tiny-react.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marsqinht/tiny-react/issues"
+  },
+  "homepage": "https://github.com/marsqinht/tiny-react#readme"
+}
