@@ -1,6 +1,6 @@
 // import { appendChild, isInnerProperty, setDomAtrribute } from "./dom"
 
-import { createDom } from "./dom"
+import { createDom } from "../dom"
 
 interface ReactNode {
   type: string,
@@ -20,7 +20,8 @@ interface Fiber {
     children: ReactNode[]
     [key: string]: any
   }
-  parent?: Fiber
+  alternate?: Fiber | null
+  return?: Fiber
   child?: Fiber
   sibling?: Fiber
   dom: Element | Text | null
@@ -50,6 +51,9 @@ export function render(element: ReactNode, container: Element | string) {
   return innerRender(element, root)
 }
 
+let currentRoot:  Fiber | null = null
+
+console.log(currentRoot);
 
 // function innerRender(reactNode: ReactNode, container: Element | Text) {
 //   const { type, props } = reactNode
@@ -66,6 +70,7 @@ export function render(element: ReactNode, container: Element | string) {
 // }
 function commitRoot() {
   commitWork(wipRoot?.child)
+  currentRoot = wipRoot
   wipRoot = null
 }
 
@@ -85,7 +90,8 @@ function innerRender(reactNode: ReactNode, container: Element | Text) {
     dom: container,
     props: {
       children: [ reactNode ],
-    }
+    },
+    alternate: currentRoot
   }
   nextUnitOfWork = wipRoot
   
@@ -109,14 +115,14 @@ function innerRender(reactNode: ReactNode, container: Element | Text) {
       const newFiber: Fiber = {
         type: element.type,
         props: element.props,
-        parent: fiber,
+        return: fiber,
         dom: null,
       }
   
       if (index === 0) {
         fiber.child = newFiber
       } else {
-        prevSibling &&  (prevSibling.sibling = newFiber)
+        prevSibling && (prevSibling.sibling = newFiber)
       }
   
       prevSibling = newFiber
@@ -132,7 +138,7 @@ function innerRender(reactNode: ReactNode, container: Element | Text) {
       if (nextFiber.sibling) {
         return nextFiber.sibling
       }
-      nextFiber = nextFiber.parent as Fiber
+      nextFiber = nextFiber.return as Fiber
     }
   }
 

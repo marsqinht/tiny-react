@@ -4,7 +4,7 @@
   "description": "最简版react实现",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,8 @@
     "rollup": "^2.70.2",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-typescript2": "^0.31.2"
+    "rollup-plugin-typescript2": "^0.31.2",
+    "typescript": "^4.7.4",
+    "vitest": "^0.16.0"
   }
 }
