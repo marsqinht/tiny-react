@@ -4,38 +4,19 @@ describe('react-dom', () => {
   it('create div element with id', () => {
     const fiberNode = createElement('div', { id: 'foo' })
 
-    expect(fiberNode).toEqual({
-      props: {
-        children: [],
-        id: 'foo'
-      },
-      type: 'div'
-    })
+    expect(fiberNode).toEqual({ props: { children: [], id: 'foo' }, type: 'div' })
   })
 
   it('create span element with id', () => {
     const fiberNode = createElement('span', { id: 'foo' })
 
-    expect(fiberNode).toEqual({
-      props: {
-        children: [],
-        id: 'foo'
-      },
-      type: 'span'
-    })
+    expect(fiberNode).toEqual({ props: { children: [], id: 'foo' }, type: 'span' })
   })
 
   it('create div element with class', () => {
-    const fiberNode = createElement('div', { class: 'foo' }
-    )
+    const fiberNode = createElement('div', { class: 'foo' })
 
-    expect(fiberNode).toEqual({
-      props: {
-        children: [],
-        class: 'foo'
-      },
-      type: 'div'
-    })
+    expect(fiberNode).toEqual({ props: { children: [], class: 'foo' }, type: 'div' })
   })
 
   it('create div element with child', () => {
@@ -81,19 +62,8 @@ describe('react-dom', () => {
     expect(fiberNode).toEqual({
       props: {
         children: [
-          {
-            props: {
-              children: []
-            },
-            type: 'div'
-          },
-          {
-            props: {
-              children: [],
-              id: 'childId'
-            },
-            type: 'div'
-          }
+          { props: { children: [] }, type: 'div' },
+          { props: { children: [], id: 'childId' }, type: 'div' }
         ],
         class: 'foo'
       },

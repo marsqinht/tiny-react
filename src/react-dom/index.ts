@@ -1,1 +1,1 @@
-export { render, createElement } from './react-dom'
+export { createElement } from './react-dom'

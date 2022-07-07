@@ -4,7 +4,9 @@
   "description": "最简版react实现",
   "main": "app.js",
   "scripts": {
-    "test": "vitest"
+    "test": "vitest",
+    "pack": "rollup --config",
+    "dev": "rollup --config -w"
   },
   "repository": {
     "type": "git",
